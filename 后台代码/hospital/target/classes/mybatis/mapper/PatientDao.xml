@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.dao.PatientDao">
+    <select id="getPatientByPhone" parameterType="com.neu.vo.PatientVo" resultType="com.neu.vo.PatientVo">
+        select
+        pid pId,
+        name pName,
+        birth pBirth,
+        sex pSex,
+        address pAddress,
+        phone pPhone,
+        uid pUid
+        from
+        patient
+        where phone=#{pPhone}
+
+    </select>
+
+    <insert id="addPatient" parameterType="com.neu.vo.PatientVo">
+        insert into patient(
+        `name`,
+        sex,
+        birth,
+        address,
+        phone
+        )
+        values (
+        #{PatientVo.pName},
+        #{PatientVo.pSex},
+        #{PatientVo.pBirth},
+        #{PatientVo.pAddress},
+        #{PatientVo.pPhone}
+        )
+    </insert>
+
+    <select id="getAppointmentList" resultType="com.neu.vo.AppointmentVo">
+        select
+            a.aid aId,
+            d.name dName,
+            p.name pName,
+            a.description aDescription,
+            a.createdate aCreatedate,
+            a.effectdate aEffectdate,
+            a.expiredate aExpiredate,
+            a.flag Flag
+        from
+	    (doctor d INNER JOIN appointment a on d.did=a.did)INNER join patient p on p.pid = a.pid
+    </select>
+
+    <insert id="addAppointment" parameterType="com.neu.vo.AppointmentVo">
+        INSERT INTO appointment(
+        did,
+        pid,
+        description,
+        createdate,
+        effectdate,
+        expiredate,
+        flag
+        )VALUES (
+        #{AppointmentVo.dId},
+        #{AppointmentVo.pId},
+        #{AppointmentVo.aDescription},
+        now(),
+        #{AppointmentVo.aEffectdate},
+        #{AppointmentVo.aExpiredate},
+        #{AppointmentVo.Flag}
+        )
+    </insert>
+
+    <delete id="delAppointment">
+        delete from appointment where aid=#{aId}
+    </delete>
+
+    <select id="getAppointmentByFlag" resultType="com.neu.vo.AppointmentVo">
+        select
+        appointment.did dId,
+        appointment.pid pId,
+        description aDescription,
+        createdate aCreatedate,
+        effectdate aEffectdate,
+        expiredate aExpiredate,
+        flag Flag
+        from
+        appointment
+        where aid=#{AppointmentVo.aId}
+    </select>
+
+    <update id="updateAppointment" parameterType="com.neu.vo.DoctorVo">
+        update appointment
+        set
+        did=#{AppointmentVo.dId},
+        description=#{AppointmentVo.aDescription},
+        effectdate=now(),
+        expiredate=now()
+        where
+        appointment.aid=#{AppointmentVo.aId}
+    </update>
+
+    <select id="getDIdByDoctor" resultType="com.neu.vo.DoctorVo">
+        select
+        did dId
+        from
+        doctor
+        where
+        did=#{dId}
+    </select>
+
+    <select id="getAppointmentByDid" resultType="com.neu.vo.AppointmentVo">
+        select
+            a.aid aId,
+            d.did dId,
+            d.name dName,
+            p.name pName,
+            a.description aDescription,
+            a.createdate aCreatedate,
+            a.effectdate aEffectdate,
+            a.expiredate aExpiredate,
+            a.flag Flag
+        from
+	    (doctor d INNER JOIN appointment a on d.did=a.did)INNER join patient p on p.pid = a.pid
+	    and d.did=(select did from doctor where did=#{dId})
+    </select>
+
+    <select id="getDnaemByDoctor" resultType="string">
+        select
+        did dId
+        from
+        doctor
+        where
+        name=#{appointmentVo.dName}
+    </select>
+
+    <select id="getDoctorByName" resultType="com.neu.vo.DoctorVo">
+        select
+        did dId
+        from
+        doctor
+        where
+        did=#{getDname}
+    </select>
+
+    <select id="getDoctorId" resultType="Integer">
+        select did from doctor where name=#{dName}
+    </select>
+
+    <select id="selectExample" resultType="com.neu.vo.AppointmentVo">
+       select
+            p.pid pId,
+            a.aid aId,
+            d.did dId,
+            d.name dName,
+            p.name pName,
+            a.description aDescription,
+            a.createdate aCreatedate,
+            a.effectdate aEffectdate,
+            a.expiredate aExpiredate,
+            a.flag Flag
+        from
+	    (doctor d INNER JOIN appointment a on d.did=a.did)INNER join patient p on p.pid = a.pid
+
+    </select>
+
+    <select id="getUserByUserName" resultType="com.neu.vo.PatientVo">
+        select
+              uid
+        from
+              `user`
+        where
+              username=#{pUserName}
+    </select>
+
+    <insert id="addUser">
+        insert into `user`(username,password,role)
+        values
+        (
+        #{PatientVo.pUserName},
+        #{PatientVo.pPassWord},
+        '3')
+    </insert>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.dao.DoctorDao">
+    <insert id="addDoctor">
+        insert  into doctor
+        (   did,
+            name,
+            sex,
+            titel,
+            subject,
+            education,
+            uid)
+            values
+            (
+            #{DoctorVo.dId},
+            #{DoctorVo.dName},
+            #{DoctorVo.dSex},
+            #{DoctorVo.dTitle},
+            #{DoctorVo.dSubject},
+            #{DoctorVo.dEducation},
+            #{DoctorVo.uId}
+
+)
+    </insert>
+    <insert id="addUser">
+        insert into user (username,password,role)
+        values
+        (
+        #{DoctorVo.uUserName},
+        #{DoctorVo.uPassWord},
+        '1')
+    </insert>
+    <update id="udpateDoctor">
+        update `user` set
+        username=#{DoctorVo.uUserName},
+        password=#{DoctorVo.uPassWord}
+        where
+            uid=#{DoctorVo.uId}
+
+    </update>
+    <update id="updateUserDoctor">
+        update doctor set
+        name=#{DoctorVo.dName},
+        sex=#{DoctorVo.dSex},
+        titel=#{DoctorVo.dTitle},
+        subject=#{DoctorVo.dSubject},
+        education=#{DoctorVo.dEducation}
+        where
+            did=#{DoctorVo.dId}
+
+    </update>
+    <delete id="delDoctor">
+        delete from doctor where did=#{did}
+    </delete>
+    <delete id="delUserDoctor">
+        delete from `user` where uid=#{uid}
+    </delete>
+
+    <select id="selectExample" resultType="com.neu.vo.DoctorVo">
+        SELECT
+          d.did dId,
+          d.name dName,
+          d.uid uId,
+          u.username uUserName,
+          u.password uPassWord,
+          d.sex dSex,
+          d.titel dTitle,
+          d.subject dSubject,
+          d.education dEducation
+        FROM
+          user u INNER JOIN doctor d on u.uid=d.uid
+    </select>
+    <select id="getUserByUserName" resultType="com.neu.vo.DoctorVo">
+        select
+              uid
+        from
+              `user`
+        where
+              username=#{username}
+    </select>
+    <select id="getUidByUserName" resultType="com.neu.vo.DoctorVo">
+        select uid from  `user` where username=#{username}
+    </select>
+</mapper>

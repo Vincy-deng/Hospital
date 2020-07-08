@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.dao.RecordDao">
+    <update id="updateRecord">
+        update
+              record
+        set
+            symptom=#{RecordVo.rSymptom},
+            diagnosis=#{RecordVo.rDiagnosis},
+            prescription=#{RecordVo.rPrescription},
+            createdate=now()
+        where
+            rid=#{RecordVo.rId}
+
+    </update>
+    <delete id="delRecord">
+        delete from record where rid=#{id}
+
+
+    </delete>
+    <select id="selectExample" resultType="com.neu.vo.RecordVo">
+       select
+              d.name dName,
+              d.did dId,
+              p.pid pId,
+              p.name pName,
+              p.phone rPhone,
+              r.rid rId,
+              r.symptom rSymptom,
+              r.diagnosis rDiagnosis,
+              r.prescription rPrescription,
+              r.createdate rCreatedate
+      from
+            (patient p INNER JOIN record r  on p.pid=r.pid) INNER JOIN doctor d  on d.did=r.did
+
+    </select>
+    <insert id="addRecord">
+
+    INSERT INTO
+              record
+    (did,pid,symptom,diagnosis,prescription,createdate)
+    VALUES
+    (
+    #{RecordVo.dId},
+    #{RecordVo.pId},
+    #{RecordVo.rSymptom},
+    #{RecordVo.rDiagnosis},
+    #{RecordVo.rPrescription},
+    now()
+    )
+
+
+    </insert>
+    <select id="getPidByNameAndPhone" resultType="com.neu.vo.RecordVo">
+        select
+                pid
+        from
+                patient
+        where
+              name= #{RecordVo.pName}
+        and  phone=#{RecordVo.rPhone}
+    </select>
+    <select id="getRecordByID" resultType="com.neu.vo.RecordVo">
+      select
+            rid
+      from
+            record
+      where pid=#{RecordVo.pId}
+      and did=#{RecordVo.dId}
+    </select>
+    <select id="getRecordByUid" resultType="com.neu.vo.RecordVo">
+        select
+              d.name dName,
+              d.did dId,
+              p.pid pId,
+              p.name pName,
+              p.phone rPhone,
+              r.rid rId,
+              r.symptom rSymptom,
+              r.diagnosis rDiagnosis,
+              r.prescription rPrescription,
+              r.createdate rCreatedate
+      from
+            (patient p INNER JOIN record r  on p.pid=r.pid) INNER JOIN doctor d  on d.did=r.did
+			and p.pid = (select pid from patient where uid=#{uId})
+
+    </select>
+</mapper>
